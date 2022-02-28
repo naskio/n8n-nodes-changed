@@ -1,0 +1,12 @@
+{
+  "name": "n8n-demo",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "GNU GENERAL PUBLIC LICENSE v3",
+  "scripts": {
+    "start": "./node_modules/n8n/bin/n8n start"
+  },
+  "dependencies": {
+    "n8n": "latest"
+  }
+}

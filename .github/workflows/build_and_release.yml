@@ -1,0 +1,30 @@
+# ENV VARS:
+# - NPM_TOKEN
+# + GITHUB_TOKEN (by default)
+
+name: Build and Publish Package to npmjs
+#on:
+#  push:
+#    tags:
+#      - "*.*.*"
+
+on:
+  release:
+    types: [ published ] # release published on GitHub
+#    types: [ created ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v2 # Setup .npmrc file to publish to npm
+        with:
+          node-version: '14.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: yarn install
+      - run: yarn build
+      - run: yarn publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
