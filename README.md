@@ -9,6 +9,10 @@ n8n node to detect if something changed between the current execution and the pr
 This node take an input and redirect the stream based on if the input has changed between the current and the previous
 execution or not.
 
+# Use Case
+
+Avoid sending multiple emails, notifications, alerts etc. Receiving one is enough.
+
 # Contribute
 
 Pull requests are welcome! For any bug reports, please create
