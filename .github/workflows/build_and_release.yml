@@ -1,5 +1,5 @@
 # ENV VARS:
-# - NPM_TOKEN
+# - NPM_TOKEN (Type = Automation)
 # + GITHUB_TOKEN (by default)
 
 name: Build and Publish Package to npmjs
