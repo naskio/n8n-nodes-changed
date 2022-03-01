@@ -22,4 +22,4 @@ See the [contributing guide](./CONTRIBUTING.md) for more information.
 
 # License
 
-[GPL-3.0](./LICENSE)
+[MIT](./LICENSE)
