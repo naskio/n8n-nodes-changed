@@ -24,7 +24,6 @@
     "change detection",
     "has changed"
   ],
-  "main": "index.js",
   "scripts": {
     "dev": "npm run watch",
     "build": "tsc && gulp",
