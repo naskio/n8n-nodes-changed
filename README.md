@@ -4,6 +4,8 @@ n8n node to detect if something changed between the current execution and the pr
 
 [![n8n](https://github.com/naskio/n8n-nodes-changed/blob/main/assets/screenshot.png?raw=true)](https://nask.io)
 
+> This node works only in trigger mode (with Cron, Webhook, etc.), in manual mode it will always use the default value.
+
 # Description
 
 This node take an input and redirect the stream based on if the input has changed between the current and the previous
@@ -11,7 +13,7 @@ execution or not.
 
 # Use Case
 
-Avoid sending multiple emails, notifications, alerts etc. Receiving one is enough.
+Avoid sending multiple emails, notifications, alerts etc. Send only the input changes.
 
 # Contribute
 

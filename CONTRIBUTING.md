@@ -34,8 +34,10 @@ To cancel a release, delete the release on GitHub, remove the tag on GitHub and 
 
 ## Overview
 
-This n8n-node calculate the hash of the input (the json of items) and persist data inside the N8nFolder
-(`hasChangedNodeData` folder will be created inside the N8nFolder).
+This n8n-node calculate the hash of the input (the json of items) and persist data using workflow `staticData`.
+
+The `staticData` persist and retrieve data from the workflow only on `trigger`mode. In `manual`mode it will not persist
+nor retrieve data. The default value will always be used in `manual`mode.
 
 After each execution, we compare the hash of the current input with the hash of the previous input and redirect the
 stream based on that.

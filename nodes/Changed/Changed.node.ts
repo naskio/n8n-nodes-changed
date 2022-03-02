@@ -1,14 +1,11 @@
-import {IExecuteFunctions, UserSettings} from 'n8n-core';
+import {IExecuteFunctions} from 'n8n-core';
 import {
 	INodeExecutionData,
 	INodeType,
 	INodeTypeDescription,
 	IWorkflowMetadata,
-	INode,
+	INode, IDataObject,
 } from 'n8n-workflow';
-import * as path from 'path';
-import * as fs from 'fs';
-import {writeFile as fsWriteFile, readFile as fsReadFile} from 'fs/promises';
 
 const hash = require('object-hash');
 
@@ -32,7 +29,7 @@ export class Changed implements INodeType {
 				displayName: 'Default has changed',
 				name: 'defaultValue',
 				type: 'boolean',
-				default: false,
+				default: true, // when there is no previous execution, we consider that the value has changed
 				description: 'When there is no previous execution, this value will define if has changed or not.',
 				// noDataExpression: true,
 			},
@@ -50,32 +47,29 @@ export class Changed implements INodeType {
 		const workflowMetadata: IWorkflowMetadata = this.getWorkflow();
 		const node: INode = this.getNode();
 
-		const basePath = path.join(UserSettings.getUserN8nFolderPath(), 'hasChangedNodeData');
-		if (!fs.existsSync(basePath)) { // create folder if it does not exist
-			fs.mkdirSync(basePath, {recursive: true});
-		}
-
-		const fileNameKeys = {
+		const nodeKeys = {
 			"workflowId": `${workflowMetadata.id}`,
 			"nodeName": `${node.name}`, // to enable multiple nodes in the same workflow
 			// "workflowActive": workflowMetadata.active, // to get different results when workflow is active or not
 		};
-		const fileName = `${hash(fileNameKeys)}.sha256.txt`;
-		const filePath = path.join(basePath, fileName);
+		const nodeHash: string = hash(nodeKeys);
+
+		const staticData = this.getWorkflowStaticData('node'); // static data is stored in the workflow automatically when we have triggers
+		staticData.hashesIndex = staticData.hashesIndex || {};
+		const hashesIndex = staticData.hashesIndex as IDataObject;
 
 		let compareResult: boolean;
+		const oldHash = hashesIndex[nodeHash] as string;
 		const newHash = hash(items.map(item => item.json));
-
-		try { // check if the file exists
-			const oldHash = await fsReadFile(filePath, 'utf8');
-			compareResult = (oldHash !== newHash);
-		} catch (error) { // if the file does not exist, create it and use defaultValue
+		if (!oldHash) {
 			compareResult = defaultValue;
-			await fsWriteFile(filePath, newHash, {encoding: 'utf8', flag: 'w'});
+			hashesIndex[nodeHash] = newHash; // first time, we have no previous hash
+		} else {
+			compareResult = newHash !== oldHash;
 		}
 
 		if (compareResult) {
-			await fsWriteFile(filePath, newHash, {encoding: 'utf8', flag: 'w'});
+			hashesIndex[nodeHash] = newHash; // we got a new hash
 			return [returnAllData, returnNoData];
 		} else {
 			return [returnNoData, returnAllData];
